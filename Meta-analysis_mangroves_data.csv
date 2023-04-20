@@ -1,0 +1,23 @@
+Authors,r,n,A,Weight,Taxon,Marker,Region,Metric
+"Azman et al., 2021",0.5101,"1,120",39,204,Rhizophora apiculata,Microsatellites,Malaysia,Nei
+"Cisneros et al., 2018",0.72,130,13,38,Rhizophora mangle,Microsatellites,Yucatan peninsula,Nei
+"Albrecht et al., 2013",-0.0537,130,13,38,Rhizophora mangle,AFLP,Florida and Caribbean,Nei
+"Wu et al., 2012 ",0.027,220,10,42,Derris trifoliata,ISSR ,Mainland Southern China,Nei
+"Wu et al., 2012 ",0.361,142,5,21,Derris trifoliata,ISSR ,"Hainan Island, China",Nei
+"Deng et al., 2009",0.38,202,13,47,Aegiceras corniculatum ,AFLP ,"South China, Malay Peninsula, Sri Lanka, and North Australia",Nei
+"Jian & Shi, 2009",0.503,234,13,51,Heritiera littoralis ,AFLP,"China, Japan and Thailand",Nei
+"Arbeláez-Cortes et al., 2007",0.42,92,5,17,Rhizophora mangle,Microsatellites,Colombian pacific,Nei
+"Castillo?Cárdenas et al., 2005",-0.15,57,6,15,Pelliciera rhizopborae,AFLP,Colombian Pacific Coast,Nei
+"Ceron-Souza et al., 2005",0.1863,56,4,11,Avicennia germinans,AFLP,Colombian Pacific coast,Nei
+"Li and Chen., 2004",0.9348,100,5,17,Sonneratia alba ,ISSR ,"Hainan Island, China",Nei
+"Nunez-Farfan et al., 2002 ",0.069,400,8,49,Rhizophora mangle,Allozymes,Atlantic coast of Mexico ,Nei
+"Nunez-Farfan et al., 2002 ",0.08,300,6,35,Rhizophora mangle,Allozymes,Pacific coast of Mexico ,Nei
+"Triest et al., 2021",0.462,670,12,81.85352772,Avicennia marina,Microsatellite,Kenya and Tanzania,Fst
+"Da Silva et al., 2021 ",0.9,77,10,24.81934729,Avicennia schaueriana,SNP,South American coast,Fst
+"Da Silva et al., 2021 ",0.78,48,6,13.85640646,Avicennia germinans,SNP,South American coast,Fst
+"Al-Qthanin & Alharbi, 2020",0.225,193,9,36.7559519,Avicennia marina,Microsatellite,Farasan archipelago,Fst
+"Triest et al., 2020",0.79,457,8,52.36410985,Avicennia marina,Microsatellite,"Gazi Bay, Kenya",Fst
+"Binks et al., 2019",0.83,336,21,79.89993742,Avicennia marina  ,SNP,Western Australia,Fst
+"Guo et al., 2018",0.24,419,47,137.3135099,Excoecaria agallocha,chloroplast DNA,Indo-West Pacific,Fst
+"Wee et al., 2014",0.236,432,13,68.93475176,Rhizophora mucronata,Microsatellite ,Southeast Asia,Fst
+"Yahya et al., 2014",0.71,312,15,63.68673331,Rhizophora apiculata,Microsatellite,Greater Sunda Islands of Indonesia,Fst
