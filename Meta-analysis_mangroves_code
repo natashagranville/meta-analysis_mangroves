@@ -1,0 +1,204 @@
+
+data <- read.csv("Meta-analysis_mangroves_data.csv")
+
+library(metafor)
+library(robumeta)
+
+#### Nei's genetic diversity ---------------------------------------------------
+
+##### 1. Data wrangling #####
+Nei_data <- subset(data, Metric == "Nei")
+library(dplyr)
+Nei_data <- mutate(Nei_data, study_id = 1:13) # Add a study id column
+Nei_data <- Nei_data %>% select(study_id, Authors:Region) # Bring the study id column to the front
+
+Nei_data$Authors <- c( "Azman et al., 2021",
+                        "Cisneros et al., 2018",
+                        "Albrecht et al., 2013",
+                        "Wu et al., 2012",
+                        "Wu et al., 2012" ,
+                        "Deng et al., 2009" ,
+                        "Jian & Shi, 2009",
+                        "Arbeláez-Cortes et al., 2007",
+                        "Castillo-Cárdenas et al., 2005",
+                        "Cerón-Souza et al., 2005",
+                        "Li & Chen, 2004",
+                        "Núñez-Farfán et al., 2002",
+                        "Núñez-Farfán et al., 2002" )
+
+# Transform Pearson's R values to Fisher's z values, because Pearson's R values are not normally distributed
+Nei_data <- escalc(measure="ZCOR",  ni=Weight, ri=r, data=Nei_data, slab=paste(Authors, sep=", "))
+# This adds two columns: yi is the the z-score transformation. xi is the estimated sample variance
+
+##### 2. Meta-analytic model #####
+Nei_meta <- rma(yi, vi, data=Nei_data)
+Nei_meta
+
+# Effect size and confidence intervals
+predict(Nei_meta, digits=3, transf=transf.ztor)  
+
+# This shows evidence for heterogeneity, but does not indicate which studies are influencing this heterogeneity. 
+# Therefore, a Baujat plot is used to illustate studies that contribute to overall heterogeneity and overall result. Uses study_id number. 
+
+##### 3. Heterogeneity and moderator variables #####
+Nei_meta_id <- rma(yi, vi, data=Nei_data, slab=study_id) # New meta-analysis including study_id
+Nei_meta_id
+
+baujat(Nei_meta_id, cex = 0.6)
+
+# Diagnostics to identify outliers and influential cases
+Nei_influence <- influence(Nei_meta)
+print(Nei_influence)
+plot(Nei_influence) # Influential studies are marked with an asterix and red dots on plot
+
+# See the effect of removing influential study
+Nei_data_subset <- Nei_data[-11, ]
+Nei_data_subset <- escalc(measure="ZCOR",  ni=Weight, ri=r, data=Nei_data_subset, slab=paste(Authors, sep=", "))
+Nei_meta_subset <- rma(yi, vi, data=Nei_data_subset)
+Nei_meta_subset
+predict(Nei_meta_subset, digits=3, transf=transf.ztor)  
+Nei_meta_id_subset <- rma(yi, vi, data=Nei_data_subset, slab=study_id) 
+Nei_meta_id_subset 
+baujat(Nei_meta_id_subset, cex = 0.6)
+Nei_influence_subset <- influence(Nei_meta_subset)
+print(Nei_influence_subset)
+plot(Nei_influence_subset) 
+
+
+# Moderating effect of taxon
+Nei_meta_taxon <- rma(yi, vi, mods = ~ Taxon, data=Nei_data)
+Nei_meta_taxon
+
+# Moderating effect of marker
+Nei_meta_marker <- rma(yi, vi, mods = ~ Marker, data=Nei_data)
+Nei_meta_marker
+
+##### 4. Publication bias #####
+
+# Funnel plot
+metafor::funnel(Nei_meta, ylab = "", cex.axis = 2,  cex = 2, lwd = 2,
+       cex.lab = 1.6, back = "white", lty = 'solid', xlab = "") 
+
+title(ylab="Standard Error", line = 2.5, cex.lab = 1.8)
+title(xlab="Transformed correlation between \n geographic distance and Nei's genetic distance",
+      line = 4, cex.lab = 1.7)
+
+# Objective tests for bias
+regtest(Nei_meta) # Egger's regression test
+ranktest(Nei_meta) # Rank correlation test
+
+##### 5. Robust variance estimation #####
+
+# Single studies that contribute multiple effect sizes (Wu et al., 2012 and Nunez-Farfan et al., 2002)
+# Therefore, need to account for effect size dependency by Robust variance estimation
+
+Nei_RVE <- robu(formula = yi ~ 1, data = Nei_data, studynum = study_id, var.eff.size = vi, transf=transf.ztor, backtransf = TRUE) 
+Nei_RVE
+
+#### Fst meta analysis ---------------------------------------------------------
+
+##### 1. Data wrangling #####
+Fst_data <- subset(data, Metric == "Fst")
+Fst_data
+
+library(dplyr)
+Fst_data <- mutate(Fst_data, study_id = 1:9) # Add a study id column
+Fst_data <- Fst_data %>% select(study_id, Authors:Region) # Bring the study id column to the front
+
+# Transform Pearson's R values to Fisher's z values, because Pearson's R values are not normally distributed
+Fst_data <- escalc(measure="ZCOR",  ni=Weight, ri=r, data=Fst_data, slab=paste(Authors, sep=", "))
+# This adds two columns: yi is the the z score transformation,  xi is the estimated sample variance
+
+##### 2. Meta-analytic model #####
+library(metafor)
+Fst_meta <- rma(yi, vi, data=Fst_data)
+Fst_meta 
+
+# Effect size and confidence intervals
+predict(Fst_meta, digits=3, transf=transf.ztor) 
+
+# This shows evidence for heterogeneity, but does not indicate which studies are influencing this heterogeneity. 
+# Therefore, a Baujat plot is used to illustate studies that contribute to overall heterogeneity and overall result. Uses study_id number. 
+
+##### 3. Heterogeneity and moderator variables #####
+
+Fst_meta_id <- rma(yi, vi, data=Fst_data, slab=study_id) # New meta-analysis including study_id
+Fst_meta_id
+baujat(Fst_meta_id) 
+
+# Diagnostics to identify outliers and influential cases
+Fst_influence <- influence(Fst_meta)
+print(Fst_influence)
+plot(Fst_influence)
+
+# Moderating effect of taxon
+Fst_meta_taxon <- rma(yi, vi, mods = ~ Taxon, data=Fst_data)
+Fst_meta_taxon
+
+# Moderating effect of marker
+Fst_meta_marker <- rma(yi, vi, mods = ~ Marker, data=Fst_data)
+Fst_meta_marker
+
+##### 4. Publication bias #####
+
+# Funnel plot
+metafor::funnel(Fst_meta, ylab = "",cex.axis = 1.1,
+       xlab = "Transformed correlation between \n geographic distance and       ",  
+       cex.lab = 1.2, back = "white", lty = 'solid') 
+title(ylab="Standard Error", line = 2.2, cex.lab = 1.3)
+
+
+
+
+
+
+metafor::funnel(Nei_meta, ylab = "", cex.axis = 2,  cex = 2, lwd = 2,
+                back = "white", lty = 'solid', xlab = "") 
+title(ylab="Standard Error", line = 2.5, cex.lab = 2)
+title(xlab="Transformed correlation between geographic distance and Nei's genetic distance",
+      line = 3, cex.lab =2)
+
+metafor::funnel(Fst_meta, ylab = "", cex.axis = 2,  cex = 2, lwd = 2,
+                back = "white", lty = 'solid', xlab = "") 
+title(ylab="Standard Error", line = 2.7, cex.lab = 2)
+title(xlab = expression(Transformed~correlation~between~geographic~distance~and~F[ST]),
+      line = 3, cex.lab = 2)
+
+
+# Objective tests for bias
+regtest(Fst_meta) # Egger's regression test
+ranktest(Fst_meta) # Rank correlation test
+
+
+##### 5. Robust variance estimation #####
+
+# Single studies that contribute multiple effect sizes (Da Silva et al 2012)
+# Therefore, need to account for effect size dependency by Robust variance estimation
+
+Fst_RVE <- robu(formula = yi ~ 1, data = Fst_data, studynum = study_id, var.eff.size = vi,) 
+Fst_RVE
+
+##### Forest plots #####
+metafor::forest(Nei_meta, atransf = transf.ztor, xlim=c(-2,3),
+       header="Author(s), Year", mlab = "", cex = 1.25,
+       xlab = "Correlation between geographic distance and Nei's genetic distance")
+text(-2, -1, pos=4, cex = 1.2, bquote(paste("RE Model (Q = ",
+                                 .(formatC(Nei_meta$QE, digits=2, format="f")), ", df = ", .(Nei_meta$k - Nei_meta$p),
+                                 ", p = ", .(formatC(Nei_meta$QEp, digits=2, format="f")), "; ", I^2, " = ",
+                                 .(formatC(Nei_meta$I2, digits=1, format="f")), "%)")))
+Nei_forest_plot <- recordPlot()
+Nei_forest_plot
+
+forest(Fst_meta, atransf = transf.ztor, xlim=c(-2,3),
+       header="Author(s), Year", cex = 1.25, mlab = "", xlab = bquote('Correlation between geographic distance and F'['ST']))
+text(-2, -1, cex = 1.2, pos=4,bquote(paste("RE Model (Q = ",
+                                .(formatC(Fst_meta$QE, digits=2, format="f")), ", df = ", .(Fst_meta$k - Fst_meta$p),
+                                ", p = ", .(formatC(Fst_meta$QEp, digits=2, format="f")), "; ", I^2, " = ",
+                                .(formatC(Fst_meta$I2, digits=1, format="f")), "%)")))
+FST_forest_plot <- recordPlot()
+FST_forest_plot
+
+library(cowplot)
+plot_grid(Nei_forest_plot, FST_forest_plot, 
+          align = 'v', nrow = 2,
+          labels = c('A', 'B'), label_size = 30)
