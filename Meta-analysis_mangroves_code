@@ -179,26 +179,33 @@ Fst_RVE <- robu(formula = yi ~ 1, data = Fst_data, studynum = study_id, var.eff.
 Fst_RVE
 
 ##### Forest plots #####
+
+pdf('Fig2.pdf', height=5.2, width=6.5, pointsize=8, family='Helvetica')
+
+mat <- matrix(c(1,2), nrow = 2, ncol = 1)
+
+graphics::layout(mat,  heights = c(1.2, 1))
+
+par(mar = c(4, 2, 2, 3))
 metafor::forest(Nei_meta, atransf = transf.ztor, xlim=c(-2,3),
-       header="Author(s), Year", mlab = "", cex = 1.25,
-       xlab = "Correlation between geographic distance and Nei's genetic distance")
-text(-2, -1, pos=4, cex = 1.2, bquote(paste("RE Model (Q = ",
-                                 .(formatC(Nei_meta$QE, digits=2, format="f")), ", df = ", .(Nei_meta$k - Nei_meta$p),
-                                 ", p = ", .(formatC(Nei_meta$QEp, digits=2, format="f")), "; ", I^2, " = ",
-                                 .(formatC(Nei_meta$I2, digits=1, format="f")), "%)")))
-Nei_forest_plot <- recordPlot()
-Nei_forest_plot
+                header="Author(s), Year", mlab = "",
+                xlab = "Correlation between geographic distance and Nei's genetic distance")
+text(-2, -1, cex = 0.935,  pos=4, bquote(paste("RE Model (Q = ",
+                                               .(formatC(Nei_meta$QE, digits=2, format="f")), ", df = ", .(Nei_meta$k - Nei_meta$p),
+                                               ", p = ", .(formatC(Nei_meta$QEp, digits=2, format="f")), "; ", I^2, " = ",
+                                               .(formatC(Nei_meta$I2, digits=1, format="f")), "%)")))
+text(-1.9, 16.2, 'A', cex = 1.3)
 
+
+par(mar = c(3.5, 2, 2, 3))
 forest(Fst_meta, atransf = transf.ztor, xlim=c(-2,3),
-       header="Author(s), Year", cex = 1.25, mlab = "", xlab = bquote('Correlation between geographic distance and F'['ST']))
-text(-2, -1, cex = 1.2, pos=4,bquote(paste("RE Model (Q = ",
-                                .(formatC(Fst_meta$QE, digits=2, format="f")), ", df = ", .(Fst_meta$k - Fst_meta$p),
-                                ", p = ", .(formatC(Fst_meta$QEp, digits=2, format="f")), "; ", I^2, " = ",
-                                .(formatC(Fst_meta$I2, digits=1, format="f")), "%)")))
-FST_forest_plot <- recordPlot()
-FST_forest_plot
+       header="Author(s), Year",mlab = "", xlab = bquote('Correlation between geographic distance and F'['ST']))
+text(-2, -1, cex = 0.935, pos=4,bquote(paste("RE Model (Q = ",
+                                             .(formatC(Fst_meta$QE, digits=2, format="f")), ", df = ", .(Fst_meta$k - Fst_meta$p),
+                                             ", p = ", .(formatC(Fst_meta$QEp, digits=2, format="f")), "; ", I^2, " = ",
+                                             .(formatC(Fst_meta$I2, digits=1, format="f")), "%)")))
 
-library(cowplot)
-plot_grid(Nei_forest_plot, FST_forest_plot, 
-          align = 'v', nrow = 2,
-          labels = c('A', 'B'), label_size = 30)
+text(-1.9, 12.1, 'B', cex = 1.3)
+
+dev.off()
+
